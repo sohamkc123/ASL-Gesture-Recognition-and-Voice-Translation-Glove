@@ -6,6 +6,19 @@
 #include "tensorflow/lite/micro/micro_mutable_op_resolver.h"
 #include "tensorflow/lite/schema/schema_generated.h"
 
+#include "DFRobotDFPlayerMini.h"
+
+// ============================================================
+// DFPLAYER
+// ============================================================
+
+HardwareSerial dfSerial(2);
+DFRobotDFPlayerMini dfPlayer;
+
+// ESP32 pins
+#define DFPLAYER_RX 16   // ESP32 receives from DFPlayer TX
+#define DFPLAYER_TX 17   // ESP32 sends to DFPlayer RX
+
 
 // ============================================================
 // MODEL
@@ -22,8 +35,6 @@ TfLiteTensor* output;
 // ============================================================
 // TENSOR ARENA
 // ============================================================
-
-// Increase this if ESP32 gives allocation errors.
 
 constexpr int kTensorArenaSize = 40 * 1024;
 
@@ -42,8 +53,44 @@ void setup()
 
     Serial.println();
     Serial.println("================================");
-    Serial.println(" ASL TINYML ESP32 TEST");
+    Serial.println(" ASL TINYML ESP32");
+    Serial.println(" DFPLAYER VOICE OUTPUT");
     Serial.println("================================");
+
+
+    // --------------------------------------------------------
+    // Start DFPlayer
+    // --------------------------------------------------------
+
+    dfSerial.begin(
+        9600,
+        SERIAL_8N1,
+        DFPLAYER_RX,
+        DFPLAYER_TX
+    );
+
+    delay(1000);
+
+    Serial.println("Initializing DFPlayer...");
+
+    if (!dfPlayer.begin(dfSerial))
+    {
+        Serial.println("ERROR: DFPlayer not detected!");
+        Serial.println("Check RX, TX, VCC and GND.");
+
+        while (1)
+        {
+            delay(1000);
+        }
+    }
+
+    Serial.println("DFPlayer initialized.");
+
+
+    // Volume: 0-30
+    dfPlayer.volume(25);
+
+    delay(500);
 
 
     // --------------------------------------------------------
@@ -118,7 +165,7 @@ void setup()
 
 
     // --------------------------------------------------------
-    // Get input/output tensors
+    // Get tensors
     // --------------------------------------------------------
 
     input =
@@ -140,7 +187,7 @@ void setup()
 
 
     Serial.print(
-        "Input elements: "
+        "Input bytes: "
     );
 
     Serial.println(
@@ -158,7 +205,7 @@ void setup()
 
 
     Serial.print(
-        "Output elements: "
+        "Output bytes: "
     );
 
     Serial.println(
@@ -167,10 +214,9 @@ void setup()
 
 
     Serial.println();
+    Serial.println("Model + DFPlayer ready!");
 
-    Serial.println(
-        "Model is ready!"
-    );
+    delay(1000);
 }
 
 
@@ -182,13 +228,9 @@ void loop()
 {
     delay(3000);
 
-    Serial.println(
-        "Running test inference..."
-    );
-
 
     // --------------------------------------------------------
-    // Create dummy input
+    // Dummy input
     // --------------------------------------------------------
 
     for (int i = 0; i < NUM_FEATURES; i++)
@@ -242,33 +284,42 @@ void loop()
 
 
     // --------------------------------------------------------
-    // Print result
+    // Convert class to letter
     // --------------------------------------------------------
 
-    Serial.print(
-        "Predicted class index: "
-    );
-
-    Serial.println(
-        best_index
-    );
+    if (best_index < 0 || best_index > 25)
+    {
+        Serial.println("Invalid class!");
+        return;
+    }
 
 
-    Serial.print(
-        "Predicted letter: "
-    );
+    char letter =
+        'A' + best_index;
 
 
-    // Current classes
-    // A = 0
-    // B = 1
-    // C = 2
+    // --------------------------------------------------------
+    // PLAY AUDIO
+    // --------------------------------------------------------
+
+    // A = 1
+    // B = 2
+    // C = 3
     // ...
+    // Z = 26
+
+    int trackNumber =
+        best_index + 1;
 
 
-    Serial.println(
-        char('A' + best_index)
-    );
+    Serial.print("Playing: ");
+    Serial.println(letter);
+
+
+    dfPlayer.play(trackNumber);
+
+
+    delay(2500);
 
 
     Serial.println(
