@@ -1,7 +1,7 @@
 import os
 
 # Path to your TFLite model
-MODEL_FILE = r"C:\Users\shrawan prasai\ASL-Gesture-Recognition-and-Voice-Translation-Glove\asl_model\asl_model_int8.tflite"
+MODEL_FILE = r"C:\Users\shrawan prasai\OneDrive\Desktop\ASL-Gesture-Recognition-and-Voice-Translation-Glove\asl_model\asl_model_int8.tflite"
 
 # Output header file
 OUTPUT_FILE = "model_data.h"

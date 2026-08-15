@@ -12,7 +12,7 @@ from sklearn.metrics import classification_report, confusion_matrix, accuracy_sc
 # SETTINGS
 # ============================================================
 
-CSV_FILE = "asl_dataset.csv"
+CSV_FILE = "ASL_combined_AZ_sorted.csv"
 
 MODEL_DIR = "asl_model"
 
