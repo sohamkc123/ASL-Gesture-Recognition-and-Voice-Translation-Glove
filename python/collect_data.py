@@ -28,7 +28,7 @@ import csv
 import os
 from datetime import date
 
-PORT = "COM5"
+PORT = "COM13"
 BAUD = 115200
 REPS_PER_LETTER = 5
 SAMPLES_PER_REP = 40
