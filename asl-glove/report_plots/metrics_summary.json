@@ -1,0 +1,17 @@
+{
+  "dataset": "data/ASL_Gesture_Dataset_Cleaned_4Sessions_NO_MPU_ERROR.csv",
+  "rows": 17600,
+  "unique_sessions": 3,
+  "test_sessions": [
+    "2026-08-25_07-56-39"
+  ],
+  "metrics": {
+    "accuracy": 0.9309090909090909,
+    "precision_macro": 0.9599986087818204,
+    "recall_macro": 0.9370192307692307,
+    "f1_macro": 0.9327778135164768,
+    "precision_weighted": 0.9656533627827941,
+    "recall_weighted": 0.9309090909090909,
+    "f1_weighted": 0.931213914043571
+  }
+}
